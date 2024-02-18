@@ -19,6 +19,10 @@ interface BookRepository{
 class DefaultBookRepository(
     private  val bookApiService: BookApiService
 ): BookRepository {
+
+    /**
+     * This is to get the book details from the api for the details page
+     */
     override suspend fun getBook(id: String): Book? {
         return try {
             val res = bookApiService.getBook(id)
