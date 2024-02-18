@@ -34,11 +34,17 @@ sealed interface BookUiState{
     object Loading: BookUiState
 }
 
+@RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 class BookListViewModel(private val bookListRepository: BookRepository): ViewModel()
 {
     var bookListUiState: BookListUiState by mutableStateOf(BookListUiState.Loading)
         private set
 
+    init {
+        getBooks()
+    }
+
+    //will add more functions when everything is tested properly
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     fun getBooks(query: String = "jazz"){//have it as jazz right now until i get the search functions implemented
         viewModelScope.launch{
@@ -66,6 +72,42 @@ class BookListViewModel(private val bookListRepository: BookRepository): ViewMod
                 val application = (this[APPLICATION_KEY] as BookApplication)
                 val bookRepository = application.container.bookRepository
                 BookListViewModel(bookRepository)
+            }
+        }
+    }
+}
+
+class BookViewModel(private val bookRepository: BookRepository): ViewModel()
+{
+    var bookUiState: BookUiState by mutableStateOf(BookUiState.Loading)
+        private set
+
+
+    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
+    fun getBook(id: String){
+        viewModelScope.launch {
+            bookUiState = BookUiState.Loading
+            bookUiState = try{
+                val book = bookRepository.getBook(id)
+                if(book == null){
+                    BookUiState.Error
+                }else{
+                    BookUiState.Success(book)
+                }
+            }catch (e: IOException){
+                BookUiState.Error
+            } catch (e: HttpException){
+                BookUiState.Error
+            }
+        }
+    }
+
+    companion object{
+        val Factory: ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                val application = (this[APPLICATION_KEY] as BookApplication)
+                val bookRepository = application.container.bookRepository
+                BookViewModel(bookRepository)
             }
         }
     }
