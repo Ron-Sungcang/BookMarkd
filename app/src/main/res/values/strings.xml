@@ -3,4 +3,8 @@
     <string name="back">Back</string>
     <string name="bars">Bars</string>
     <string name="search">Search</string>
+    <string name="books">Books</string>
+    <string name="reviews">Reviews</string>
+    <string name="favourites">Favourites</string>
+    <string name="lists">Lists</string>
 </resources>
