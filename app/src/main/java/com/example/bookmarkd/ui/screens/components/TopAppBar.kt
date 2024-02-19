@@ -31,6 +31,9 @@ data class TabItem(
     val title: String
 )
 
+/**
+ * This is the top app bar that deals with menu search and navigations
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookAppBar(
@@ -74,6 +77,9 @@ fun BookAppBar(
     }
 }
 
+/**
+ * a tab row to move through displays in the home screen
+ */
 @Composable
 fun BookTabRow(
     tabs: List<TabItem>,
