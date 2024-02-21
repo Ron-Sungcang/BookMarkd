@@ -13,7 +13,6 @@ import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.res.stringResource
 import com.example.bookmarkd.R
 import com.example.bookmarkd.ui.screens.components.BookAppBar
-import com.example.bookmarkd.ui.screens.components.TabItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -21,10 +20,10 @@ fun HomeScreen(){
     Scaffold(
         topBar ={ BookAppBar(
             listOf(
-                TabItem(title = stringResource(id = R.string.books)),
-                TabItem(title = stringResource(id = R.string.favourites)),
-                TabItem(title = stringResource(id = R.string.reviews)),
-                TabItem(title= stringResource(id = R.string.lists))
+                stringResource(id = R.string.books),
+                stringResource(id = R.string.favourites),
+                stringResource(id = R.string.reviews),
+                stringResource(id = R.string.lists)
             ),
             canNavigateBack = false,
             navigateUp = { },

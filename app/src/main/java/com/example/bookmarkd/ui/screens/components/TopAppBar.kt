@@ -1,22 +1,29 @@
 package com.example.bookmarkd.ui.screens.components
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.paddingFromBaseline
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArtTrack
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -32,18 +39,23 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.bookmarkd.R
 import com.example.bookmarkd.ui.screens.HomeDisplay
 import com.example.bookmarkd.ui.theme.BookMarkdTheme
 
-data class TabItem(
-    val title: String
+
+//data class for menu items in the drawer body
+data class MenuItem(
+    val id: String,
+    val title:String,
+    val contentDesc: String,
+    val icon: ImageVector
 )
 
 /**
@@ -53,7 +65,7 @@ data class TabItem(
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun BookAppBar(
-    tabItems: List<TabItem>,
+    tabItems: List<String>,
     canNavigateBack: Boolean,
     navigateUp: () -> Unit,
     expandMenu:() -> Unit,
@@ -111,7 +123,7 @@ fun BookAppBar(
                     },
                     text = {
                         Text(
-                            item.title,
+                            item,
                             style = MaterialTheme.typography.labelSmall
                         )
                     }
@@ -125,7 +137,7 @@ fun BookAppBar(
                 .fillMaxWidth()
                 .weight(1f)
         ) {index ->
-            HomeDisplay(currentScreen = tabItems[index].title)
+            HomeDisplay(currentScreen = tabItems[index])
        }
 
     }
@@ -145,8 +157,37 @@ fun DrawHeader(modifier: Modifier = Modifier){
             Text(
                 text = "Account Profile",
                 style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(top = 4.dp)
+                modifier = Modifier.padding(4.dp)
             )
+        }
+    }
+}
+
+@Composable
+fun DrawerBody(
+    items: List<MenuItem>,
+    modifier: Modifier = Modifier,
+    onItemClick: (MenuItem) -> Unit
+){
+    LazyColumn(modifier){
+        items(items){item ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        onItemClick(item)
+                    }
+                    .padding(dimensionResource(id = R.dimen.padding_medium))
+            ) {
+                Icon(imageVector = item.icon, contentDescription = item.contentDesc)
+                Text(
+                    text= item.title,
+                    style = MaterialTheme.typography.labelMedium,
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(4.dp)
+                )
+            }
         }
     }
 }
@@ -157,10 +198,10 @@ fun BookAppBarPreview(){
     BookMarkdTheme {
         BookAppBar(
             listOf(
-                TabItem(title = stringResource(id = R.string.books)),
-                TabItem(title = stringResource(id = R.string.favourites)),
-                TabItem(title = stringResource(id = R.string.reviews)),
-                TabItem(title= stringResource(id = R.string.lists))
+                stringResource(id = R.string.books),
+                stringResource(id = R.string.favourites),
+                stringResource(id = R.string.reviews),
+                stringResource(id = R.string.lists)
             ),
             canNavigateBack = false,
             navigateUp = { },
@@ -174,5 +215,60 @@ fun BookAppBarPreview(){
 fun DrawHeaderPreview(){
     BookMarkdTheme {
         DrawHeader()
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun DrawBodyPreview(){
+    BookMarkdTheme {
+        DrawerBody(
+            items = listOf(
+                MenuItem(
+                    id = stringResource(id = R.string.home),
+                    title = stringResource(id = R.string.home),
+                    contentDesc = stringResource(id = R.string.home),
+                    icon = Icons.Filled.Home
+                ),
+                MenuItem(
+                    id = stringResource(id = R.string.search),
+                    title = stringResource(id = R.string.search),
+                    contentDesc = stringResource(id = R.string.search),
+                    icon = Icons.Filled.Search
+                ),
+                MenuItem(
+                    id = stringResource(id = R.string.profile),
+                    title = stringResource(id = R.string.profile),
+                    contentDesc = stringResource(id = R.string.profile),
+                    icon = Icons.Filled.Person
+                ),
+                MenuItem(
+                    id = stringResource(id = R.string.readlist),
+                    title = stringResource(id = R.string.readlist),
+                    contentDesc = stringResource(id = R.string.readlist),
+                    icon = Icons.Filled.AccessTime
+                ),
+                MenuItem(
+                    id = stringResource(id = R.string.lists),
+                    title = stringResource(id = R.string.lists),
+                    contentDesc = stringResource(id = R.string.lists),
+                    icon = Icons.Filled.ArtTrack
+                ),
+                MenuItem(
+                    id = stringResource(id = R.string.reviews),
+                    title = stringResource(id = R.string.reviews),
+                    contentDesc = stringResource(id = R.string.reviews),
+                    icon = Icons.Filled.Menu
+                ),
+                MenuItem(
+                    id = stringResource(id = R.string.settings),
+                    title = stringResource(id = R.string.settings),
+                    contentDesc = stringResource(id = R.string.settings),
+                    icon = Icons.Filled.Settings
+                )
+
+            ),
+            onItemClick = {}
+        )
     }
 }
