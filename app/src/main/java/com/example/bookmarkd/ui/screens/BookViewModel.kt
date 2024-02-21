@@ -1,8 +1,7 @@
-package com.example.bookmarkd.screens
+package com.example.bookmarkd.ui.screens
 
 import android.net.http.HttpException
 import android.os.Build
-import android.text.Spannable.Factory
 import androidx.annotation.RequiresExtension
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -10,11 +9,9 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.bookmarkd.data.BookRepository
-import com.example.bookmarkd.data.DefaultBookRepository
 import com.example.bookmarkd.model.Book
 import kotlinx.coroutines.launch
 import java.io.IOException
