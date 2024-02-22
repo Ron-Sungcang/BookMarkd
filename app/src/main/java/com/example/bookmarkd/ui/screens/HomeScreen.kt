@@ -146,10 +146,12 @@ fun HomeDisplay(
 
 @Composable
 fun BookScreen(modifier: Modifier = Modifier){
-    Box(modifier = modifier.fillMaxSize()){
-        Text(text = stringResource(id = R.string.books))
-    }
+
 }
+
+@Composable
+fun BookRow(){}
+
 
 @Composable
 fun FavouriteScreen(modifier: Modifier = Modifier){
