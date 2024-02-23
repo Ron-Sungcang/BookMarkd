@@ -17,8 +17,10 @@ import kotlinx.coroutines.launch
 import java.io.IOException
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import com.example.bookmarkd.BookApplication
+import com.example.bookmarkd.ui.screens.search_screen.SearchUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 
 sealed interface BookListUiState{
@@ -40,9 +42,27 @@ class BookListViewModel(private val bookListRepository: BookRepository): ViewMod
     var bookListUiState: BookListUiState by mutableStateOf(BookListUiState.Loading)
         private set
 
+    var searchUiState = MutableStateFlow(SearchUiState())
+    val uiStateSearch = searchUiState.asStateFlow()
 
 
-    //will add more functions when everything is tested properly
+    //search logic
+    fun upDateSearch(q: String){
+        searchUiState.update {currentState ->
+            currentState.copy(
+                query = q
+            )
+        }
+    }
+
+    fun updateSearchStarted(searchStarted: Boolean){
+        searchUiState.update { currentState ->
+            currentState.copy(
+                searchStarted = searchStarted
+            )
+        }
+    }
+
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     fun getBooks(query: String){//have it as jazz right now until i get the search functions implemented
         viewModelScope.launch{
