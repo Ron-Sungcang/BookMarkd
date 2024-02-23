@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.ArtTrack
@@ -24,6 +26,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
@@ -45,6 +48,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.bookmarkd.R
 import com.example.bookmarkd.model.Book
 import com.example.bookmarkd.ui.screens.components.BookAppBar
+import com.example.bookmarkd.ui.screens.components.BookPhotoCard
 import com.example.bookmarkd.ui.screens.components.BooksRow
 import com.example.bookmarkd.ui.screens.components.DrawHeader
 import com.example.bookmarkd.ui.screens.components.DrawerBody
@@ -141,10 +145,7 @@ fun HomeScreen(){
             )
             }
         ){innerpadding ->
-            HomeDisplay(bookListUiState = bookListViewModel.bookListUiState,
-                currentScreen = stringResource(id = R.string.books),
-                Modifier.padding(innerpadding)
-            )
+            LoadingScreen(Modifier.padding(innerpadding))
         }
         
     }
@@ -200,10 +201,33 @@ fun ErrorScreen(retryAction: () -> Unit,modifier: Modifier = Modifier){
 @Composable
 fun BookScreen(
     bookList: List<Book>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(0.dp)
 ){
-
-    BooksRow(bookList)
+    LazyColumn(modifier = modifier.fillMaxSize(),
+        contentPadding = contentPadding,
+        verticalArrangement = Arrangement.spacedBy(24.dp)
+    ){
+        item {
+            Text(
+              text = stringResource(id = R.string.favourites),
+              style = MaterialTheme.typography.titleMedium
+            )
+            BooksRow(bookList = bookList)
+            Spacer(modifier = Modifier.size(30.dp))
+            Text(
+               text = stringResource(id = R.string.fiction),
+               style = MaterialTheme.typography.titleMedium
+               )
+            BooksRow(bookList = bookList)
+            Spacer(modifier = Modifier.size(30.dp))
+            Text(
+                text = stringResource(id = R.string.nonfiction),
+                style = MaterialTheme.typography.titleMedium
+            )
+            BooksRow(bookList = bookList)
+        }
+    }
 }
 
 
