@@ -3,6 +3,7 @@ package com.example.bookmarkd.ui.screens.components
 import android.telecom.Call.Details
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
@@ -57,7 +58,7 @@ fun BooksRow(
 ){
     LazyRow{
         items(bookList){
-            BookPhotoCard(book = it, onDetailsClick ={} )
+            BookPhotoCard(book = it, onDetailsClick ={}, modifier = Modifier.padding(10.dp))
         }
     }
 }
