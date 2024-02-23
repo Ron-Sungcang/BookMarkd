@@ -17,10 +17,13 @@ import kotlinx.coroutines.launch
 import java.io.IOException
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import com.example.bookmarkd.BookApplication
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 
 sealed interface BookListUiState{
-    data class Success(val books: List<Book>): BookListUiState
+
+    data class Success(val books: List<Book>) : BookListUiState
     object Error: BookListUiState
     object Loading: BookListUiState
 }
@@ -36,6 +39,7 @@ class BookListViewModel(private val bookListRepository: BookRepository): ViewMod
 {
     var bookListUiState: BookListUiState by mutableStateOf(BookListUiState.Loading)
         private set
+
 
     init {
         getBooks()
@@ -68,7 +72,7 @@ class BookListViewModel(private val bookListRepository: BookRepository): ViewMod
             initializer {
                 val application = (this[APPLICATION_KEY] as BookApplication)
                 val bookRepository = application.container.bookRepository
-                BookListViewModel(bookRepository)
+                BookListViewModel(bookListRepository = bookRepository)
             }
         }
     }

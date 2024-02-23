@@ -1,5 +1,9 @@
 package com.example.bookmarkd.ui.screens
 
+import android.os.Build
+import androidx.annotation.RequiresExtension
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -7,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
@@ -16,6 +21,7 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.Button
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalDrawerSheet
@@ -30,21 +36,28 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.bookmarkd.R
+import com.example.bookmarkd.model.Book
 import com.example.bookmarkd.ui.screens.components.BookAppBar
+import com.example.bookmarkd.ui.screens.components.BooksRow
 import com.example.bookmarkd.ui.screens.components.DrawHeader
 import com.example.bookmarkd.ui.screens.components.DrawerBody
 import com.example.bookmarkd.ui.screens.components.MenuItem
 import kotlinx.coroutines.launch
 
+@RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(){
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val drawerScope = rememberCoroutineScope()
+
 
     val drawerItems = listOf(
         MenuItem(
@@ -90,6 +103,9 @@ fun HomeScreen(){
             icon = Icons.Filled.Settings
         )
     )
+
+    val bookListViewModel: BookListViewModel =
+        viewModel(factory = BookListViewModel.Factory)
     ModalNavigationDrawer(
         drawerContent = {
             Column {
@@ -102,6 +118,7 @@ fun HomeScreen(){
         },
         drawerState = drawerState
     ) {
+
         Scaffold(
             topBar ={ BookAppBar(
                 listOf(
@@ -119,38 +136,76 @@ fun HomeScreen(){
                 },
                 onSearch = {
 
-                }
+                },
+                bookListUiState = bookListViewModel.bookListUiState
             )
             }
         ){innerpadding ->
-            HomeDisplay(currentScreen = stringResource(id = R.string.books),
-                Modifier.padding(innerpadding))
+            HomeDisplay(bookListUiState = bookListViewModel.bookListUiState,
+                currentScreen = stringResource(id = R.string.books),
+                Modifier.padding(innerpadding)
+            )
         }
         
     }
 }
 
 
+@RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @Composable
 fun HomeDisplay(
+    bookListUiState: BookListUiState,
     currentScreen: String,
     modifier: Modifier = Modifier,
 ){
-    when(currentScreen){
-        stringResource(id = R.string.books) -> BookScreen()
-        stringResource(id = R.string.favourites) -> FavouriteScreen()
-        stringResource(id = R.string.reviews) -> ReviewScreen()
-        else -> ListScreen()
+    when(bookListUiState) {
+        is BookListUiState.Success -> when (currentScreen) {
+                stringResource(id = R.string.books) -> BookScreen(bookListUiState.books)
+                stringResource(id = R.string.favourites) -> FavouriteScreen()
+                stringResource(id = R.string.reviews) -> ReviewScreen()
+                else -> ListScreen()
+            }
+        is BookListUiState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize())
+        is BookListUiState.Error ->ErrorScreen(modifier = modifier.fillMaxSize(), retryAction = {})
     }
 }
 
 @Composable
-fun BookScreen(modifier: Modifier = Modifier){
-
+fun LoadingScreen(modifier: Modifier = Modifier){
+    Image(
+        modifier = modifier.size(200.dp),
+        painter = painterResource(id = R.drawable.loading_img),
+        contentDescription = stringResource(id = R.string.loading)
+    )
 }
 
 @Composable
-fun BookRow(){}
+fun ErrorScreen(retryAction: () -> Unit,modifier: Modifier = Modifier){
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.ic_connection_error), contentDescription = ""
+        )
+        Text(text = stringResource(R.string.loading_failed), modifier = Modifier.padding(16.dp))
+        Button(onClick = retryAction) {
+            Text(stringResource(id = R.string.retry))
+        }
+    }
+}
+
+@RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
+@Composable
+fun BookScreen(
+    bookList: List<Book>,
+    modifier: Modifier = Modifier
+){
+
+    BooksRow(bookList)
+}
+
 
 
 @Composable

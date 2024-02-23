@@ -8,8 +8,11 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface BookApiService {
+
+
+
     @GET("volumes")
-    suspend fun getBooks(@Query("bookname")bookname: String): Response<BooksQueryResponse>
+    suspend fun getBooks(@Query("q")query: String): Response<BooksQueryResponse>
 
     @GET("volumes/{id}")
     suspend fun getBook(@Path("id")id: String):Response<Book>
