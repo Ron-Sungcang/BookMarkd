@@ -36,7 +36,7 @@ fun BookPhotoCard(
     ){
         AsyncImage(
             model = ImageRequest.Builder(context = LocalContext.current)
-                .data(book.volumeInfo.imageLinks?.thumbnail)
+                .data(book.volumeInfo.imageLinks?.thumbnail?.replace("http:", "https:"))
                 .build(),
             contentDescription = stringResource(id = R.string.book_photo),
             error = painterResource(id = R.drawable.ic_broken_image),
@@ -44,7 +44,6 @@ fun BookPhotoCard(
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxWidth(),
         )
-        Text(text = book.volumeInfo.title)
     }
 }
 

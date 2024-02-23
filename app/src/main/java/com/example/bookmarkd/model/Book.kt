@@ -20,7 +20,7 @@ data class Book(
             val publishedDate: String?,
             val description: String?,
             val language: String?,
-            val imageLinks: ImageLinks?,
+            val imageLinks: ImageLinks? = null,
             val previewLink: String?,
             val canonicalVolumeLink: String?
         ){
@@ -30,6 +30,7 @@ data class Book(
                     val smallThumbnail: String,
                     val thumbnail: String
                 )
+
             }
         }
     }
