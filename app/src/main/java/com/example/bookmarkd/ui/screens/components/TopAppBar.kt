@@ -1,5 +1,7 @@
 package com.example.bookmarkd.ui.screens.components
 
+import android.os.Build
+import androidx.annotation.RequiresExtension
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,9 +21,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArtTrack
-import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
@@ -50,6 +50,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.bookmarkd.R
+import com.example.bookmarkd.ui.screens.BookListUiState
 import com.example.bookmarkd.ui.screens.HomeDisplay
 import com.example.bookmarkd.ui.theme.BookMarkdTheme
 
@@ -66,10 +67,12 @@ data class MenuItem(
  * This is the top app bar that deals with menu search and navigations
  * Uses tabrows to navigate between homescreen pages
  */
+@RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun BookAppBar(
     tabItems: List<String>,
+    bookListUiState: BookListUiState,
     canNavigateBack: Boolean,
     navigateUp: () -> Unit,
     expandMenu:() -> Unit,
@@ -141,7 +144,7 @@ fun BookAppBar(
                 .fillMaxWidth()
                 .weight(1f)
         ) {index ->
-            HomeDisplay(currentScreen = tabItems[index])
+            HomeDisplay(currentScreen = tabItems[index], bookListUiState = bookListUiState)
        }
 
     }
@@ -205,17 +208,7 @@ fun DrawerBody(
 @Composable
 fun BookAppBarPreview(){
     BookMarkdTheme {
-        BookAppBar(
-            listOf(
-                stringResource(id = R.string.books),
-                stringResource(id = R.string.favourites),
-                stringResource(id = R.string.reviews),
-                stringResource(id = R.string.lists)
-            ),
-            canNavigateBack = false,
-            navigateUp = { },
-            expandMenu = { },
-            onSearch = {  })
+
     }
 }
 

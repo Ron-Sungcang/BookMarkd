@@ -17,10 +17,13 @@ import kotlinx.coroutines.launch
 import java.io.IOException
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import com.example.bookmarkd.BookApplication
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 
 sealed interface BookListUiState{
-    data class Success(val books: List<Book>): BookListUiState
+
+    data class Success(val books: List<Book>, val fiction: List<Book>, val nonFiction: List<Book>) : BookListUiState
     object Error: BookListUiState
     object Loading: BookListUiState
 }
@@ -37,23 +40,23 @@ class BookListViewModel(private val bookListRepository: BookRepository): ViewMod
     var bookListUiState: BookListUiState by mutableStateOf(BookListUiState.Loading)
         private set
 
-    init {
-        getBooks()
-    }
+
 
     //will add more functions when everything is tested properly
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
-    fun getBooks(query: String = "jazz"){//have it as jazz right now until i get the search functions implemented
+    fun getBooks(query: String){//have it as jazz right now until i get the search functions implemented
         viewModelScope.launch{
             bookListUiState = BookListUiState.Loading
             bookListUiState = try{
                 val books = bookListRepository.getBooks(query)
-                if (books == null) {
+                val fiction = bookListRepository.getBooks("fiction")
+                val nonFiction = bookListRepository.getBooks("non fiction")
+                if (books == null || fiction == null || nonFiction == null) {
                     BookListUiState.Error
                 }else if (books.isEmpty()) {
-                    BookListUiState.Success(emptyList())
+                    BookListUiState.Success(emptyList(), fiction, nonFiction)
                 }else {
-                    BookListUiState.Success(books)
+                    BookListUiState.Success(books, fiction,nonFiction)
                 }
             } catch (e: IOException){
                 BookListUiState.Error
@@ -63,12 +66,14 @@ class BookListViewModel(private val bookListRepository: BookRepository): ViewMod
         }
     }
 
+
+
     companion object{
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[APPLICATION_KEY] as BookApplication)
                 val bookRepository = application.container.bookRepository
-                BookListViewModel(bookRepository)
+                BookListViewModel(bookListRepository = bookRepository)
             }
         }
     }
