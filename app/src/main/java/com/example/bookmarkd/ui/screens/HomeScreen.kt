@@ -2,6 +2,7 @@ package com.example.bookmarkd.ui.screens
 
 import android.os.Build
 import androidx.annotation.RequiresExtension
+import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -44,6 +45,11 @@ import com.example.bookmarkd.ui.screens.components.DrawHeader
 import com.example.bookmarkd.ui.screens.components.DrawerBody
 import com.example.bookmarkd.ui.screens.components.MenuItem
 import kotlinx.coroutines.launch
+
+enum class HomeScreen(@StringRes val title: Int){
+    Start(title = R.string.app_name),
+    Search(title = R.string.search)
+}
 
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @OptIn(ExperimentalMaterial3Api::class)
