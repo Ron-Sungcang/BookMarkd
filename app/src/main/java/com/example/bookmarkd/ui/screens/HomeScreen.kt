@@ -46,7 +46,7 @@ import com.example.bookmarkd.ui.screens.components.DrawerBody
 import com.example.bookmarkd.ui.screens.components.MenuItem
 import kotlinx.coroutines.launch
 
-enum class HomeScreen(@StringRes val title: Int){
+enum class BookScreen(@StringRes val title: Int){
     Start(title = R.string.app_name),
     Search(title = R.string.search)
 }
