@@ -106,7 +106,6 @@ fun HomeScreen(){
 
     val bookListViewModel: BookListViewModel =
         viewModel(factory = BookListViewModel.Factory)
-    bookListViewModel.getBooks("fiction")
     ModalNavigationDrawer(
         drawerContent = {
             Column {

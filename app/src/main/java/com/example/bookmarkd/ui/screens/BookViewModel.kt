@@ -45,6 +45,9 @@ class BookListViewModel(private val bookListRepository: BookRepository): ViewMod
     var searchUiState = MutableStateFlow(SearchUiState())
     val uiStateSearch = searchUiState.asStateFlow()
 
+    init{
+        getBooks("fiction")
+    }
 
     //search logic
     fun upDateSearch(q: String){
