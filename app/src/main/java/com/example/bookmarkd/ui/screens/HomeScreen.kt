@@ -1,7 +1,9 @@
 package com.example.bookmarkd.ui.screens
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresExtension
+import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -29,6 +31,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,6 +39,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.example.bookmarkd.R
 import com.example.bookmarkd.model.Book
 import com.example.bookmarkd.ui.screens.components.BookAppBar
@@ -43,14 +51,30 @@ import com.example.bookmarkd.ui.screens.components.BooksRow
 import com.example.bookmarkd.ui.screens.components.DrawHeader
 import com.example.bookmarkd.ui.screens.components.DrawerBody
 import com.example.bookmarkd.ui.screens.components.MenuItem
+import com.example.bookmarkd.ui.screens.search_screen.SearchScreen
 import kotlinx.coroutines.launch
+
+
+enum class BookScreen(@StringRes val title: Int){
+    Start(title = R.string.app_name),
+    Search(title = R.string.search),
+}
 
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(){
+fun HomeScreen(
+    bookListViewModel: BookListViewModel =
+        viewModel(factory = BookListViewModel.Factory),
+    navController: NavHostController  = rememberNavController()
+
+){
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val drawerScope = rememberCoroutineScope()
+    val backStackEntry by navController.currentBackStackEntryAsState()
+    val currentScreen = BookScreen.valueOf(
+        backStackEntry?.destination?.route ?: BookScreen.Start.name
+    )
 
 
     val drawerItems = listOf(
@@ -98,9 +122,6 @@ fun HomeScreen(){
         )
     )
 
-    val bookListViewModel: BookListViewModel =
-        viewModel(factory = BookListViewModel.Factory)
-    bookListViewModel.getBooks("fiction")
     ModalNavigationDrawer(
         drawerContent = {
             Column {
@@ -116,27 +137,36 @@ fun HomeScreen(){
 
         Scaffold(
             topBar ={ BookAppBar(
+                currentScreen = currentScreen,
                 listOf(
                     stringResource(id = R.string.books),
                     stringResource(id = R.string.favourites),
                     stringResource(id = R.string.reviews),
                     stringResource(id = R.string.lists)
                 ),
-                canNavigateBack = false,
-                navigateUp = { },
+                canNavigateBack = navController.previousBackStackEntry != null,
+                navigateUp = { navController.navigateUp() },
                 expandMenu = {
                     drawerScope.launch {
                         drawerState.open()
                     }
                 },
-                onSearch = {
-
-                },
+                onSearch = {navController.navigate(BookScreen.Search.name)},
                 bookListUiState = bookListViewModel.bookListUiState,
             )
             }
         ){innerpadding ->
-            LoadingScreen(Modifier.padding(innerpadding))
+            NavHost(navController = navController,
+                startDestination = BookScreen.Start.name,
+                modifier = Modifier.padding(innerpadding)){
+                composable(route = BookScreen.Start.name){
+                }
+                composable(route = BookScreen.Search.name){
+                    Log.d("navigation","navigation to search screen called")
+                    SearchScreen(viewModel = bookListViewModel)
+                }
+
+            }
         }
         
     }
