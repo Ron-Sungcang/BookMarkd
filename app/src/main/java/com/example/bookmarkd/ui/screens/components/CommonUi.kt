@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -72,7 +74,9 @@ fun BookSearchCard(
         modifier = modifier,
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
     ) {
-        Row(Modifier) {
+        Row(Modifier .fillMaxWidth()
+            .padding(16.dp)
+            .sizeIn(minHeight = 72.dp)) {
             AsyncImage(
                 model = ImageRequest.Builder(context = LocalContext.current)
                     .data(book.volumeInfo.imageLinks?.thumbnail?.replace("http:", "https:"))
@@ -82,7 +86,7 @@ fun BookSearchCard(
                 placeholder = painterResource(id = R.drawable.loading_img),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .height(180.dp)
+                    .size(180.dp)
             )
             Spacer(Modifier.width(dimensionResource(id = R.dimen.padding_medium)))
             Column(modifier = Modifier.weight(1f)) {
