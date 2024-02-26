@@ -19,8 +19,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArtTrack
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
@@ -51,6 +53,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.bookmarkd.R
 import com.example.bookmarkd.ui.screens.BookListUiState
+import com.example.bookmarkd.ui.screens.BookScreen
 import com.example.bookmarkd.ui.screens.HomeDisplay
 import com.example.bookmarkd.ui.theme.BookMarkdTheme
 
@@ -71,6 +74,7 @@ data class MenuItem(
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun BookAppBar(
+    currentScreen: BookScreen,
     tabItems: List<String>,
     bookListUiState: BookListUiState,
     canNavigateBack: Boolean,
@@ -79,74 +83,83 @@ fun BookAppBar(
     onSearch: () -> Unit,
     modifier: Modifier = Modifier
 ){
-    var selectedIndex by remember {
-        mutableStateOf(0)
-    }
-
-    val pagerState = rememberPagerState {
-        tabItems.size
-    }
-    LaunchedEffect(selectedIndex){
-        pagerState.animateScrollToPage(selectedIndex)
-    }
-    LaunchedEffect(pagerState.currentPage, pagerState.isScrollInProgress){
-        if(!pagerState.isScrollInProgress){
-            selectedIndex = pagerState.currentPage
-        }
-    }
     Column(
         modifier = modifier
-            .fillMaxSize()
     ) {
-        CenterAlignedTopAppBar(
-            title = { Text(stringResource(id = R.string.app_name)) },
-            colors = TopAppBarDefaults.mediumTopAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer
-            ),
-            modifier = modifier,
-            navigationIcon = {
-                IconButton(onClick = expandMenu) {
-                    Icon(
-                        imageVector = Icons.Filled.Menu,
-                        contentDescription = stringResource(id = R.string.bars)
-                    )
-                }
-            },
-            actions = {
-                IconButton(onClick = onSearch) {
-                    Icon(
-                        imageVector = Icons.Filled.Search,
-                        contentDescription = stringResource(id = R.string.search)
-                    )
-                }
-            }
-        )
-        TabRow(selectedTabIndex = selectedIndex) {
-            tabItems.forEachIndexed { index, item ->
-                Tab(
-                    selected = index == selectedIndex,
-                    onClick = {
-                        selectedIndex = index
-                    },
-                    text = {
-                        Text(
-                            item,
-                            style = MaterialTheme.typography.labelSmall
+            CenterAlignedTopAppBar(
+                title = { Text(stringResource(id = currentScreen.title)) },
+                colors = TopAppBarDefaults.mediumTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                ),
+                modifier = modifier,
+                navigationIcon = {
+                    if(canNavigateBack) {
+                        IconButton(onClick = navigateUp) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = stringResource(R.string.back_button)
+                            )
+                        }
+                    }else{
+                    IconButton(onClick = expandMenu) {
+                        Icon(
+                            imageVector = Icons.Filled.Menu,
+                            contentDescription = stringResource(id = R.string.bars)
+                            )
+                        }
+                    }
+                },
+                actions = {
+                    IconButton(onClick = onSearch) {
+                        Icon(
+                            imageVector = Icons.Filled.Search,
+                            contentDescription = stringResource(id = R.string.search)
                         )
                     }
-                )
+                }
+            )
+        if(currentScreen.title == R.string.app_name) {
+            var selectedIndex by remember {
+                mutableStateOf(0)
+            }
+
+            val pagerState = rememberPagerState {
+                tabItems.size
+            }
+            LaunchedEffect(selectedIndex){
+                pagerState.animateScrollToPage(selectedIndex)
+            }
+            LaunchedEffect(pagerState.currentPage, pagerState.isScrollInProgress){
+                if(!pagerState.isScrollInProgress){
+                    selectedIndex = pagerState.currentPage
+                }
+            }
+            TabRow(selectedTabIndex = selectedIndex) {
+                tabItems.forEachIndexed { index, item ->
+                    Tab(
+                        selected = index == selectedIndex,
+                        onClick = {
+                            selectedIndex = index
+                        },
+                        text = {
+                            Text(
+                                item,
+                                style = MaterialTheme.typography.labelSmall
+                            )
+                        }
+                    )
+                }
+            }
+
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+            ) { index ->
+                HomeDisplay(currentScreen = tabItems[index], bookListUiState = bookListUiState)
             }
         }
-
-        HorizontalPager(
-            state = pagerState,
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-        ) {index ->
-            HomeDisplay(currentScreen = tabItems[index], bookListUiState = bookListUiState)
-       }
-
     }
 }
 
@@ -178,10 +191,11 @@ fun DrawerBody(
     modifier: Modifier = Modifier,
     onItemClick: (MenuItem) -> Unit
 ){
-    LazyColumn(modifier
-        .width(280.dp)
-        .fillMaxHeight()
-        .background(MaterialTheme.colorScheme.background)){
+    LazyColumn(
+        modifier
+            .width(280.dp)
+            .fillMaxHeight()
+            .background(MaterialTheme.colorScheme.background)){
         items(items){item ->
             Row(
                 modifier = Modifier

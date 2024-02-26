@@ -1,6 +1,7 @@
 package com.example.bookmarkd.ui.screens.search_screen
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresExtension
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -21,6 +22,9 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import android.view.KeyEvent
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -40,11 +44,12 @@ fun SearchScreen(
     viewModel: BookListViewModel,
     modifier: Modifier = Modifier
 ){
+    Log.d("search","search screen called")
     val uiState = viewModel.bookListUiState
     val uiStateSearch = viewModel.uiStateSearch.collectAsState().value
     val history =
         remember { mutableStateListOf<String>() }
-    Column {
+    Column(modifier.fillMaxSize()) {
         OutlinedTextField(
             value = uiStateSearch.query,
             onValueChange = {viewModel.upDateSearch(it)},
@@ -72,7 +77,7 @@ fun SearchScreen(
                     false
                 }
                 .fillMaxWidth()
-                .padding(start = 8.dp, end = 8.dp, top = 8.dp)
+
         )
         if(uiStateSearch.searchStarted){
             when(uiState){
@@ -81,6 +86,7 @@ fun SearchScreen(
                     bookList = uiState.books
                 )
                 is BookListUiState.Error -> ErrorScreen(retryAction = {}, modifier)
+                else -> {}
             }
         } else{
             SearchHistory(history = history, onItemClick = {})
@@ -104,6 +110,7 @@ fun SearchHistory(
                 text = it,
                 style = MaterialTheme.typography.labelMedium,
                 modifier = Modifier.clickable { onItemClick }
+                    .fillMaxWidth()
             )
         }
     }

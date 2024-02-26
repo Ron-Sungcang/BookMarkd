@@ -72,8 +72,7 @@ fun BookSearchCard(
         modifier = modifier,
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
     ) {
-        Row(Modifier
-            .fillMaxWidth()) {
+        Row(Modifier) {
             AsyncImage(
                 model = ImageRequest.Builder(context = LocalContext.current)
                     .data(book.volumeInfo.imageLinks?.thumbnail?.replace("http:", "https:"))
@@ -83,7 +82,6 @@ fun BookSearchCard(
                 placeholder = painterResource(id = R.drawable.loading_img),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .fillMaxWidth()
                     .height(180.dp)
             )
             Spacer(Modifier.width(dimensionResource(id = R.dimen.padding_medium)))
@@ -119,8 +117,8 @@ fun BookSearchList(
     modifier: Modifier = Modifier
 ){
     LazyColumn(modifier = modifier){
-        items(bookList){
-            BookSearchList(bookList = bookList)
+        items(bookList){item ->
+            BookSearchCard(book = item, onDetailsClick = {})
         }
     }
 }
