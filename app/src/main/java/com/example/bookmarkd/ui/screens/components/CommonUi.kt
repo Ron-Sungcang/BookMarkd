@@ -30,7 +30,6 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.bookmarkd.R
 import com.example.bookmarkd.model.Book
-import com.example.bookmarkd.ui.screens.BookListViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

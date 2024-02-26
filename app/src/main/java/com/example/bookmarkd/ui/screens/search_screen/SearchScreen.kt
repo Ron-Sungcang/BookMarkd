@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -45,6 +46,7 @@ fun SearchScreen(
     modifier: Modifier = Modifier
 ){
     Log.d("search","search screen called")
+    val focusManager = LocalFocusManager.current
     val uiState = viewModel.bookListUiState
     val uiStateSearch = viewModel.uiStateSearch.collectAsState().value
     val history =
@@ -66,6 +68,7 @@ fun SearchScreen(
                     history.add(uiStateSearch.query)
                     viewModel.getBooks(uiStateSearch.query)
                     viewModel.updateSearchStarted(true)
+                    focusManager.clearFocus()
                 }
             ),
             modifier = Modifier
@@ -73,6 +76,7 @@ fun SearchScreen(
                     if (e.nativeKeyEvent.keyCode == KeyEvent.KEYCODE_ENTER) {
                         viewModel.getBooks(uiStateSearch.query)
                         viewModel.updateSearchStarted(true)
+                        focusManager.clearFocus()
                     }
                     false
                 }
