@@ -30,11 +30,35 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.bookmarkd.R
 import com.example.bookmarkd.model.Book
+import com.example.bookmarkd.ui.screens.BookUiState
+import com.example.bookmarkd.ui.screens.BookViewModel
+import com.example.bookmarkd.ui.screens.ErrorScreen
+import com.example.bookmarkd.ui.screens.LoadingScreen
+
+@Composable
+fun BookDetailScreen(
+    bookViewmodel: BookViewModel,
+    modifier: Modifier = Modifier,
+    retryAction: () -> Unit,
+    contentPadding: PaddingValues = PaddingValues(0.dp)
+
+){
+    when(val bookUiState = bookViewmodel.bookUiState){
+        is BookUiState.Loading -> {
+            LoadingScreen()
+        }
+        is BookUiState.Error -> {
+            ErrorScreen(retryAction = retryAction)
+        }
+        is BookUiState.Success ->{
+            BookDetail(bookUiState.book, contentPadding)
+        }
+    }
+}
 
 @Composable
 fun BookDetail(
     selectedBook: Book,
-    onBackButtonClick: () -> Unit,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier
 ){

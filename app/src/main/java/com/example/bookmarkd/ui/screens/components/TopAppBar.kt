@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -22,7 +21,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArtTrack
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
@@ -52,6 +50,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.bookmarkd.R
+import com.example.bookmarkd.model.Book
 import com.example.bookmarkd.ui.screens.BookListUiState
 import com.example.bookmarkd.ui.screens.BookScreen
 import com.example.bookmarkd.ui.screens.HomeDisplay
@@ -81,6 +80,7 @@ fun BookAppBar(
     navigateUp: () -> Unit,
     expandMenu:() -> Unit,
     onSearch: () -> Unit,
+    onBookClick: (Book) -> Unit,
     modifier: Modifier = Modifier
 ){
     Column(
@@ -93,7 +93,7 @@ fun BookAppBar(
                 ),
                 modifier = modifier,
                 navigationIcon = {
-                    if(canNavigateBack) {
+                    if(canNavigateBack && currentScreen.title != R.string.home) {
                         IconButton(onClick = navigateUp) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -118,7 +118,7 @@ fun BookAppBar(
                     }
                 }
             )
-        if(currentScreen.title == R.string.app_name) {
+        if(currentScreen.title == R.string.app_name|| currentScreen.title == R.string.home) {
             var selectedIndex by remember {
                 mutableStateOf(0)
             }
@@ -157,7 +157,7 @@ fun BookAppBar(
                     .fillMaxWidth()
                     .weight(1f)
             ) { index ->
-                HomeDisplay(currentScreen = tabItems[index], bookListUiState = bookListUiState)
+                HomeDisplay(currentScreen = tabItems[index], bookListUiState = bookListUiState, onBookClick = onBookClick)
             }
         }
     }
