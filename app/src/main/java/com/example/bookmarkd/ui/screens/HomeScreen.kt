@@ -46,6 +46,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.bookmarkd.R
 import com.example.bookmarkd.model.Book
+import com.example.bookmarkd.ui.screens.BookDetailsScreen.BookDetailScreen
 import com.example.bookmarkd.ui.screens.components.BookAppBar
 import com.example.bookmarkd.ui.screens.components.BooksRow
 import com.example.bookmarkd.ui.screens.components.DrawHeader
@@ -58,6 +59,8 @@ import kotlinx.coroutines.launch
 enum class BookScreen(@StringRes val title: Int){
     Start(title = R.string.app_name),
     Search(title = R.string.search),
+    Details(title = R.string.book_path),
+    Home(title = R.string.home)
 }
 
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
@@ -66,6 +69,8 @@ enum class BookScreen(@StringRes val title: Int){
 fun HomeScreen(
     bookListViewModel: BookListViewModel =
         viewModel(factory = BookListViewModel.Factory),
+    bookDetailsViewModel: BookViewModel =
+        viewModel(factory = BookViewModel.Factory),
     navController: NavHostController  = rememberNavController()
 
 ){
@@ -128,7 +133,9 @@ fun HomeScreen(
                 DrawHeader()
                 DrawerBody(
                     items = drawerItems,
-                    onItemClick = {}
+                    onItemClick = {
+                        navController.navigate(it.id)
+                    }
                 )
             }
         },
@@ -153,6 +160,10 @@ fun HomeScreen(
                 },
                 onSearch = {navController.navigate(BookScreen.Search.name)},
                 bookListUiState = bookListViewModel.bookListUiState,
+                onBookClick = {
+                    bookListViewModel.selectedBookId = it.id
+                    navController.navigate(BookScreen.Details.name)
+                }
             )
             }
         ){innerpadding ->
@@ -161,11 +172,22 @@ fun HomeScreen(
                 modifier = Modifier.padding(innerpadding)){
                 composable(route = BookScreen.Start.name){
                 }
+                composable(route = BookScreen.Home.name){
+                }
                 composable(route = BookScreen.Search.name){
                     Log.d("navigation","navigation to search screen called")
-                    SearchScreen(viewModel = bookListViewModel)
+                    SearchScreen(
+                        viewModel = bookListViewModel,
+                        onBookClick = {
+                            bookListViewModel.selectedBookId = it.id
+                            navController.navigate(BookScreen.Details.name)
+                        }
+                    )
                 }
-
+                composable(route = BookScreen.Details.name){
+                    bookDetailsViewModel.getBook(bookListViewModel.selectedBookId)
+                    BookDetailScreen(bookViewmodel = bookDetailsViewModel, retryAction = {bookDetailsViewModel.getBook(bookListViewModel.selectedBookId) })
+                }
             }
         }
         
@@ -179,13 +201,15 @@ fun HomeDisplay(
     bookListUiState: BookListUiState,
     currentScreen: String,
     modifier: Modifier = Modifier,
+    onBookClick: (Book) -> Unit
 ){
     when(bookListUiState) {
         is BookListUiState.Success -> when (currentScreen) {
                 stringResource(id = R.string.books) -> BookScreen(
                     bookFavouriteList = emptyList(),
                     bookFictionList = bookListUiState.fiction,
-                    bookNonFictionList = bookListUiState.nonFiction
+                    bookNonFictionList = bookListUiState.nonFiction,
+                    onBookClick = onBookClick
                 )
                 stringResource(id = R.string.favourites) -> FavouriteScreen()
                 stringResource(id = R.string.reviews) -> ReviewScreen()
@@ -229,6 +253,7 @@ fun BookScreen(
     bookFictionList: List<Book>,
     bookNonFictionList: List<Book>,
     modifier: Modifier = Modifier,
+    onBookClick: (Book) -> Unit,
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ){
     LazyColumn(modifier = modifier.fillMaxSize(),
@@ -240,19 +265,19 @@ fun BookScreen(
               text = stringResource(id = R.string.favourites),
               style = MaterialTheme.typography.titleMedium
             )
-            BooksRow(bookList = bookFavouriteList)
+            BooksRow(bookList = bookFavouriteList, onBookClick = onBookClick)
             Spacer(modifier = Modifier.size(30.dp))
             Text(
                text = stringResource(id = R.string.fiction),
                style = MaterialTheme.typography.titleMedium
                )
-            BooksRow(bookList = bookFictionList)
+            BooksRow(bookList = bookFictionList, onBookClick = onBookClick)
             Spacer(modifier = Modifier.size(30.dp))
             Text(
                 text = stringResource(id = R.string.nonfiction),
                 style = MaterialTheme.typography.titleMedium
             )
-            BooksRow(bookList = bookNonFictionList)
+            BooksRow(bookList = bookNonFictionList, onBookClick = onBookClick)
         }
     }
 }

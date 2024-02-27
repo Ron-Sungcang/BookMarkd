@@ -7,7 +7,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
@@ -22,16 +21,14 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import android.view.KeyEvent
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
 import com.example.bookmarkd.R
+import com.example.bookmarkd.model.Book
 import com.example.bookmarkd.ui.screens.BookListUiState
 import com.example.bookmarkd.ui.screens.BookListViewModel
 import com.example.bookmarkd.ui.screens.ErrorScreen
@@ -43,6 +40,7 @@ import com.example.bookmarkd.ui.screens.components.BookSearchList
 @Composable
 fun SearchScreen(
     viewModel: BookListViewModel,
+    onBookClick: (Book) -> Unit,
     modifier: Modifier = Modifier
 ){
     Log.d("search","search screen called")
@@ -87,7 +85,8 @@ fun SearchScreen(
             when(uiState){
                 is BookListUiState.Loading -> LoadingScreen(modifier)
                 is BookListUiState.Success -> BookSearchList(
-                    bookList = uiState.books
+                    bookList = uiState.books,
+                    onBookClick = onBookClick
                 )
                 is BookListUiState.Error -> ErrorScreen(retryAction = {}, modifier)
                 else -> {}

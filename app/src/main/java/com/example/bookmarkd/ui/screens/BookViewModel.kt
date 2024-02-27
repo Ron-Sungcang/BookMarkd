@@ -42,6 +42,8 @@ class BookListViewModel(private val bookListRepository: BookRepository): ViewMod
     var bookListUiState: BookListUiState by mutableStateOf(BookListUiState.Loading)
         private set
 
+    var selectedBookId by mutableStateOf("")
+
     var searchUiState = MutableStateFlow(SearchUiState())
     val uiStateSearch = searchUiState.asStateFlow()
 

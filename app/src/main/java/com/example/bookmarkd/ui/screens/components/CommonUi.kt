@@ -39,7 +39,7 @@ fun BookPhotoCard(
     onDetailsClick: (Book) -> Unit
 ){
     Card(
-        onClick = {onDetailsClick},
+        onClick = {onDetailsClick(book)},
         modifier = modifier,
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
     ){
@@ -69,7 +69,7 @@ fun BookSearchCard(
     onDetailsClick: (Book) -> Unit
 ){
     Card(
-        onClick = {onDetailsClick},
+        onClick = {onDetailsClick(book)},
         modifier = modifier,
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
     ) {
@@ -106,10 +106,11 @@ fun BookSearchCard(
 fun BooksRow(
     bookList: List<Book>,
     modifier: Modifier = Modifier,
+    onBookClick: (Book) -> Unit
 ){
     LazyRow(modifier = modifier){
         items(bookList){
-            BookPhotoCard(book = it, onDetailsClick ={}, modifier = Modifier.padding(10.dp))
+            BookPhotoCard(book = it, onDetailsClick =onBookClick, modifier = Modifier.padding(10.dp))
         }
     }
 }
@@ -117,11 +118,12 @@ fun BooksRow(
 @Composable
 fun BookSearchList(
     bookList: List<Book>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onBookClick: (Book) -> Unit
 ){
     LazyColumn(modifier = modifier){
         items(bookList){item ->
-            BookSearchCard(book = item, onDetailsClick = {})
+            BookSearchCard(book = item, onDetailsClick = onBookClick)
         }
     }
 }

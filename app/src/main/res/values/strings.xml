@@ -16,6 +16,7 @@
     <string name="loading_failed">Loading Failed</string>
     <string name="retry">Retry</string>
     <string name="back_button">Back</string>
+    <string name="book_path">Book: </string>
 
     <string name="fantasy">Fantasy</string>
     <string name="humor">Humor</string>
