@@ -205,7 +205,8 @@ fun HomeDisplay(
 ){
     when(bookListUiState) {
         is BookListUiState.Success -> when (currentScreen) {
-                stringResource(id = R.string.books) -> BookScreen(
+                stringResource(id = R.string.books) ->
+                    BookScreen(
                     bookFavouriteList = emptyList(),
                     bookFictionList = bookListUiState.fiction,
                     bookNonFictionList = bookListUiState.nonFiction,

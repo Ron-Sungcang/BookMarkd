@@ -17,6 +17,7 @@ import kotlinx.coroutines.launch
 import java.io.IOException
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import com.example.bookmarkd.BookApplication
+import com.example.bookmarkd.ui.screens.favourite_screen.FavouriteUiState
 import com.example.bookmarkd.ui.screens.search_screen.SearchUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -47,6 +48,11 @@ class BookListViewModel(private val bookListRepository: BookRepository): ViewMod
     var searchUiState = MutableStateFlow(SearchUiState())
     val uiStateSearch = searchUiState.asStateFlow()
 
+    var favouriteBooks: MutableList<Book> by mutableStateOf(mutableListOf())
+        private set
+    var favouriteUiState = MutableStateFlow(FavouriteUiState(favouriteBooks))
+    val uiStateFavourite = favouriteUiState.asStateFlow()
+
     init{
         getBooks("fiction")
     }
@@ -67,6 +73,26 @@ class BookListViewModel(private val bookListRepository: BookRepository): ViewMod
             )
         }
     }
+
+    //Favourites logic
+    fun addFavouriteBook(book:Book){
+        favouriteBooks.add(book)
+        favouriteUiState.update { currentState ->
+            currentState.copy(
+                favourites = favouriteBooks
+            )
+        }
+    }
+
+    fun removeFavouriteBook(book: Book){
+        favouriteBooks.removeIf {it.id == book.id}
+        favouriteUiState.update { currentState ->
+            currentState.copy(
+                favourites = favouriteBooks
+            )
+        }
+    }
+
 
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     fun getBooks(query: String){//have it as jazz right now until i get the search functions implemented
