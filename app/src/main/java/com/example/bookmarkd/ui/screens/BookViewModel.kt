@@ -51,7 +51,7 @@ class BookListViewModel(private val bookListRepository: BookRepository): ViewMod
     var favouriteBooks: MutableList<Book> by mutableStateOf(mutableListOf())
         private set
     var favouriteUiState = MutableStateFlow(FavouriteUiState(favouriteBooks))
-    val uiStateFavourite = favouriteUiState.asStateFlow()
+
 
     init{
         getBooks("fiction")

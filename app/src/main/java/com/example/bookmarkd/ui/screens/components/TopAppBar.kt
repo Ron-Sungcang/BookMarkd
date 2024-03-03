@@ -54,7 +54,10 @@ import com.example.bookmarkd.model.Book
 import com.example.bookmarkd.ui.screens.BookListUiState
 import com.example.bookmarkd.ui.screens.BookScreen
 import com.example.bookmarkd.ui.screens.HomeDisplay
+import com.example.bookmarkd.ui.screens.favourite_screen.FavouriteUiState
+import com.example.bookmarkd.ui.screens.search_screen.SearchUiState
 import com.example.bookmarkd.ui.theme.BookMarkdTheme
+import kotlinx.coroutines.flow.MutableStateFlow
 
 
 //data class for menu items in the drawer body
@@ -76,6 +79,7 @@ fun BookAppBar(
     currentScreen: BookScreen,
     tabItems: List<String>,
     bookListUiState: BookListUiState,
+    bookSearchUiState: MutableStateFlow<FavouriteUiState>,
     canNavigateBack: Boolean,
     navigateUp: () -> Unit,
     expandMenu:() -> Unit,
@@ -157,7 +161,7 @@ fun BookAppBar(
                     .fillMaxWidth()
                     .weight(1f)
             ) { index ->
-                HomeDisplay(currentScreen = tabItems[index], bookListUiState = bookListUiState, onBookClick = onBookClick)
+                HomeDisplay(currentScreen = tabItems[index], bookSearchUiState = bookSearchUiState, bookListUiState = bookListUiState, onBookClick = onBookClick)
             }
         }
     }

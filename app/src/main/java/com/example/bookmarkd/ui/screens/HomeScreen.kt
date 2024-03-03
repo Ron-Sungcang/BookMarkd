@@ -48,11 +48,14 @@ import com.example.bookmarkd.R
 import com.example.bookmarkd.model.Book
 import com.example.bookmarkd.ui.screens.BookDetailsScreen.BookDetailScreen
 import com.example.bookmarkd.ui.screens.components.BookAppBar
+import com.example.bookmarkd.ui.screens.components.BookGridScreen
 import com.example.bookmarkd.ui.screens.components.BooksRow
 import com.example.bookmarkd.ui.screens.components.DrawHeader
 import com.example.bookmarkd.ui.screens.components.DrawerBody
 import com.example.bookmarkd.ui.screens.components.MenuItem
+import com.example.bookmarkd.ui.screens.favourite_screen.FavouriteUiState
 import com.example.bookmarkd.ui.screens.search_screen.SearchScreen
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 
@@ -160,6 +163,7 @@ fun HomeScreen(
                 },
                 onSearch = {navController.navigate(BookScreen.Search.name)},
                 bookListUiState = bookListViewModel.bookListUiState,
+                bookSearchUiState = bookListViewModel.favouriteUiState,
                 onBookClick = {
                     bookListViewModel.selectedBookId = it.id
                     navController.navigate(BookScreen.Details.name)
@@ -199,9 +203,10 @@ fun HomeScreen(
 @Composable
 fun HomeDisplay(
     bookListUiState: BookListUiState,
+    bookSearchUiState: MutableStateFlow<FavouriteUiState>,
     currentScreen: String,
     modifier: Modifier = Modifier,
-    onBookClick: (Book) -> Unit
+    onBookClick: (Book) -> Unit,
 ){
     when(bookListUiState) {
         is BookListUiState.Success -> when (currentScreen) {
@@ -212,7 +217,10 @@ fun HomeDisplay(
                     bookNonFictionList = bookListUiState.nonFiction,
                     onBookClick = onBookClick
                 )
-                stringResource(id = R.string.favourites) -> FavouriteScreen()
+                stringResource(id = R.string.favourites) -> FavouriteScreen(
+                    bookFavouriteList =bookSearchUiState.value.favourites,
+                    onBookClick = onBookClick
+                )
                 stringResource(id = R.string.reviews) -> ReviewScreen()
                 else -> ListScreen()
             }
@@ -286,10 +294,16 @@ fun BookScreen(
 
 
 @Composable
-fun FavouriteScreen(modifier: Modifier = Modifier){
-    Box(modifier = modifier.fillMaxSize()){
-        Text(text = stringResource(id = R.string.favourites))
-    }
+fun FavouriteScreen(
+    bookFavouriteList: List<Book>,
+    onBookClick: (Book) -> Unit,
+    modifier: Modifier = Modifier
+){
+    BookGridScreen(
+        bookList = bookFavouriteList,
+        onBookClick = onBookClick,
+        modifier = Modifier
+    )
 
 }
 
