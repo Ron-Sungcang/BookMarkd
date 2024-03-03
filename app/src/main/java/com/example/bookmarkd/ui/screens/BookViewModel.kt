@@ -75,6 +75,11 @@ class BookListViewModel(private val bookListRepository: BookRepository): ViewMod
     }
 
     //Favourites logic
+    fun isFavourite(book: Book): Boolean
+    {
+        return !favouriteBooks.none { x -> x.id == book.id }
+    }
+
     fun addFavouriteBook(book:Book){
         favouriteBooks.add(book)
         favouriteUiState.update { currentState ->

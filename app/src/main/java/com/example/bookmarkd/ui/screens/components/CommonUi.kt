@@ -13,13 +13,19 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
@@ -73,9 +79,11 @@ fun BookSearchCard(
         modifier = modifier,
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
     ) {
-        Row(Modifier .fillMaxWidth()
-            .padding(16.dp)
-            .sizeIn(minHeight = 72.dp)) {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+                .sizeIn(minHeight = 72.dp)) {
             AsyncImage(
                 model = ImageRequest.Builder(context = LocalContext.current)
                     .data(book.volumeInfo.imageLinks?.thumbnail?.replace("http:", "https:"))
@@ -125,5 +133,23 @@ fun BookSearchList(
         items(bookList){item ->
             BookSearchCard(book = item, onDetailsClick = onBookClick)
         }
+    }
+}
+
+@Composable
+fun FavouriteButton(
+    favourite: Boolean,
+    onFavouriteClick: () -> Unit,
+    modifier: Modifier = Modifier
+){
+    IconButton(
+        onClick = onFavouriteClick,
+        modifier = modifier
+    ) {
+        Icon(
+            imageVector = if (favourite) Icons.Filled.Favorite else Icons.Outlined.Favorite,
+            tint = if (favourite) Color.Red else Color.LightGray,
+            contentDescription = null
+        )
     }
 }

@@ -186,7 +186,7 @@ fun HomeScreen(
                 }
                 composable(route = BookScreen.Details.name){
                     bookDetailsViewModel.getBook(bookListViewModel.selectedBookId)
-                    BookDetailScreen(bookViewmodel = bookDetailsViewModel, retryAction = {bookDetailsViewModel.getBook(bookListViewModel.selectedBookId) })
+                    BookDetailScreen(bookListViewModel = bookListViewModel,bookViewmodel = bookDetailsViewModel, retryAction = {bookDetailsViewModel.getBook(bookListViewModel.selectedBookId) })
                 }
             }
         }
