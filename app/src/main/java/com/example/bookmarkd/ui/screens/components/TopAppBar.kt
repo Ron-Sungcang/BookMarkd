@@ -79,7 +79,7 @@ fun BookAppBar(
     currentScreen: BookScreen,
     tabItems: List<String>,
     bookListUiState: BookListUiState,
-    bookSearchUiState: MutableStateFlow<FavouriteUiState>,
+    bookFavouriteUiState: MutableStateFlow<FavouriteUiState>,
     canNavigateBack: Boolean,
     navigateUp: () -> Unit,
     expandMenu:() -> Unit,
@@ -161,7 +161,7 @@ fun BookAppBar(
                     .fillMaxWidth()
                     .weight(1f)
             ) { index ->
-                HomeDisplay(currentScreen = tabItems[index], bookSearchUiState = bookSearchUiState, bookListUiState = bookListUiState, onBookClick = onBookClick)
+                HomeDisplay(currentScreen = tabItems[index], bookFavouriteUiState = bookFavouriteUiState, bookListUiState = bookListUiState, onBookClick = onBookClick)
             }
         }
     }

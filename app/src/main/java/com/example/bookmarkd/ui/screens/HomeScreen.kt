@@ -203,7 +203,7 @@ fun HomeScreen(
 @Composable
 fun HomeDisplay(
     bookListUiState: BookListUiState,
-    bookSearchUiState: MutableStateFlow<FavouriteUiState>,
+    bookFavouriteUiState: MutableStateFlow<FavouriteUiState>,
     currentScreen: String,
     modifier: Modifier = Modifier,
     onBookClick: (Book) -> Unit,
@@ -212,13 +212,13 @@ fun HomeDisplay(
         is BookListUiState.Success -> when (currentScreen) {
                 stringResource(id = R.string.books) ->
                     BookScreen(
-                    bookFavouriteList = emptyList(),
+                    bookFavouriteList = bookFavouriteUiState.value.favourites,
                     bookFictionList = bookListUiState.fiction,
                     bookNonFictionList = bookListUiState.nonFiction,
                     onBookClick = onBookClick
                 )
                 stringResource(id = R.string.favourites) -> FavouriteScreen(
-                    bookFavouriteList =bookSearchUiState.value.favourites,
+                    bookFavouriteList =bookFavouriteUiState.value.favourites,
                     onBookClick = onBookClick
                 )
                 stringResource(id = R.string.reviews) -> ReviewScreen()
