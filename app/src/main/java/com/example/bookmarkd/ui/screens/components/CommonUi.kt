@@ -4,6 +4,7 @@ import android.telecom.Call.Details
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -12,14 +13,23 @@ import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
@@ -73,9 +83,11 @@ fun BookSearchCard(
         modifier = modifier,
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
     ) {
-        Row(Modifier .fillMaxWidth()
-            .padding(16.dp)
-            .sizeIn(minHeight = 72.dp)) {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+                .sizeIn(minHeight = 72.dp)) {
             AsyncImage(
                 model = ImageRequest.Builder(context = LocalContext.current)
                     .data(book.volumeInfo.imageLinks?.thumbnail?.replace("http:", "https:"))
@@ -103,6 +115,28 @@ fun BookSearchCard(
 }
 
 @Composable
+fun BookGridScreen(
+    bookList: List<Book>,
+    modifier: Modifier = Modifier,
+    onBookClick: (Book) -> Unit
+){
+    LazyVerticalGrid(
+        columns = GridCells.Adaptive(120.dp),
+        modifier =  modifier.padding(horizontal = 4.dp)
+        ){
+        items(items = bookList, key = {book -> book.id}){
+            book -> BookPhotoCard(
+            book = book,
+            onDetailsClick = onBookClick,
+            modifier = modifier
+                .padding(4.dp)
+                .fillMaxWidth()
+            )
+        }
+    }
+}
+
+@Composable
 fun BooksRow(
     bookList: List<Book>,
     modifier: Modifier = Modifier,
@@ -125,5 +159,23 @@ fun BookSearchList(
         items(bookList){item ->
             BookSearchCard(book = item, onDetailsClick = onBookClick)
         }
+    }
+}
+
+@Composable
+fun FavouriteButton(
+    favourite: Boolean,
+    onFavouriteClick: () -> Unit,
+    modifier: Modifier = Modifier
+){
+    IconButton(
+        onClick = onFavouriteClick,
+        modifier = modifier
+    ) {
+        Icon(
+            imageVector = if (favourite) Icons.Filled.Favorite else Icons.Outlined.Favorite,
+            tint = if (favourite) Color.Red else Color.LightGray,
+            contentDescription = null
+        )
     }
 }
