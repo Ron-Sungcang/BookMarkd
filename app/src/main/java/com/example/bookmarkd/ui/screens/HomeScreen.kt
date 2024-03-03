@@ -163,7 +163,7 @@ fun HomeScreen(
                 },
                 onSearch = {navController.navigate(BookScreen.Search.name)},
                 bookListUiState = bookListViewModel.bookListUiState,
-                bookSearchUiState = bookListViewModel.favouriteUiState,
+                bookFavouriteUiState = bookListViewModel.favouriteUiState,
                 onBookClick = {
                     bookListViewModel.selectedBookId = it.id
                     navController.navigate(BookScreen.Details.name)
